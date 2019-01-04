@@ -5,22 +5,16 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Bucket Drops",style: TextStyle(fontWeight: FontWeight.normal),),
+        title: Text("Bucket Drops",style: TextStyle(fontWeight: FontWeight.normal,color: Color(0xFFB05fcaa)),),
         backgroundColor: Color(0xFFB241543),
-        centerTitle: true,
+        centerTitle: false,
         elevation: 10.0,
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.more_vert), onPressed: (){})
+          IconButton(icon: Image.asset('images/ic_plus.png'), onPressed: (){}),
+          IconButton(icon: Icon(Icons.more_vert,color: Color(0xFFB05fcaa) ,), onPressed: (){})
         ],
       ),
-      
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          
-        },
-        child: Icon(Icons.add),
-      ),
-      
+
       body: Container(
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
