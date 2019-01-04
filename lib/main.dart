@@ -4,13 +4,15 @@ import 'package:todo/ui/home.dart';
 import 'package:todo/ui/empty_home.dart';
 import 'package:todo/utils/dbhelper.dart';
 
+List data;
+
 main() async{
 
-//  var db = new DatabaseHelper();
-//  int savetask = await db.addTask(new Task("Hello Task","2013-05-07"));
+  var db = new DatabaseHelper();
+//  int savetask = await db.addTask(new Task("Hello Task 2","2013-05-07"));
 //  print("$savetask :User saved");
-
-//  List data = await db.allTask();
+  data = await db.allTask();
+  data = data.toList();
 //  print (data);
 
 //  Task task = await db.singleTask(1);
@@ -28,10 +30,14 @@ main() async{
 //  ));
 //  print(update);
 
+//  int delete = await db.deleteTask(1);
+//  print(delete);
+//
+
 
   runApp(MaterialApp(
     title: "To Do",
-    home: Home(),
+    home: data.length != 0 ? Home(tasks: data): EmptyHome(),
     debugShowCheckedModeBanner: false,
   ));
 }

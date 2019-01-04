@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:todo/models/todo_model.dart';
+import 'package:todo/utils/dbhelper.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+
+  List tasks;
+  Home({Key key,this.tasks}) : super(key: key);
+
+  @override
+  HomeState createState() {
+    return new HomeState();
+  }
+}
+
+class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,18 +34,23 @@ class Home extends StatelessWidget {
           image: DecorationImage(image: AssetImage("images/background.png"),fit: BoxFit.cover)
         ),
         child: ListView.builder(
-          itemCount: 1,
+          itemCount: widget.tasks.length,
           itemBuilder: (_,int position){
+            var task = Task.fromMap(widget.tasks[position]);
             return Card(
               child: ListTile(
-                title: Text("Run A Company"),
+                title: Text(task.task),
                 leading: Image.asset('images/ic_drop.png',height: 20.0,),
-                trailing: Text("10 years"),
+                trailing: Text(task.time),
                 onTap: (){
                   // See Details
                 },
-                onLongPress: (){
-                  // Delete
+                onLongPress: () async{
+                  setState(() {
+                    widget.tasks.removeAt(position);
+                    var db = new DatabaseHelper();
+                    db.deleteTask(task.id);
+                  });
                 },
               )
             );
@@ -42,4 +60,6 @@ class Home extends StatelessWidget {
       ),
     );
   }
+
 }
+
