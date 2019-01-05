@@ -3,10 +3,6 @@ import 'package:todo/models/todo_model.dart';
 import 'package:todo/utils/dbhelper.dart';
 
 class Home extends StatefulWidget {
-
-  List tasks;
-  Home({Key key,this.tasks}) : super(key: key);
-
   @override
   HomeState createState() {
     return new HomeState();
@@ -14,6 +10,24 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+
+  var db = new DatabaseHelper();
+  var _editTextController = TextEditingController();
+  List items = [];
+
+  @override
+  void initState() {
+    super.initState();
+    ShowData();
+  }
+
+  ShowData() async{
+    items= await db.allTask();
+    setState(() {
+      items = items.toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +37,7 @@ class HomeState extends State<Home> {
         centerTitle: false,
         elevation: 10.0,
         actions: <Widget>[
-          IconButton(icon: Image.asset('images/ic_plus.png'), onPressed: (){}),
+          IconButton(icon: Image.asset('images/ic_plus.png'), onPressed: _showFromDialog),
           IconButton(icon: Icon(Icons.more_vert,color: Color(0xFFB05fcaa) ,), onPressed: (){})
         ],
       ),
@@ -34,31 +48,68 @@ class HomeState extends State<Home> {
           image: DecorationImage(image: AssetImage("images/background.png"),fit: BoxFit.cover)
         ),
         child: ListView.builder(
-          itemCount: widget.tasks.length,
-          itemBuilder: (_,int position){
-            var task = Task.fromMap(widget.tasks[position]);
+          itemCount: items.length,
+          itemBuilder: (_,position){
+            Task t = Task.fromMap(items[position]);
             return Card(
               child: ListTile(
-                title: Text(task.task),
-                leading: Image.asset('images/ic_drop.png',height: 20.0,),
-                trailing: Text(task.time),
-                onTap: (){
-                  // See Details
-                },
+                leading: Image.asset("images/ic_drop.png",height: 20,),
+                title: Text(t.task),
+                trailing: Text(t.time),
                 onLongPress: () async{
                   setState(() {
-                    widget.tasks.removeAt(position);
+                    items.removeAt(position);
                     var db = new DatabaseHelper();
-                    db.deleteTask(task.id);
+                    db.deleteTask(t.id);
                   });
                 },
-              )
+              ),
             );
-
           },
         ),
       ),
     );
+  }
+
+  void _showFromDialog() {
+    var alert = AlertDialog(
+      content: Row(
+        children: <Widget>[
+          Expanded(child: TextField(
+            controller: _editTextController,
+            autofocus: true,
+            decoration: InputDecoration(
+                labelText: "Add Task",
+                hintText: "Join A Gamming Club",
+                icon: Icon(Icons.note_add)
+            ),
+          ))
+        ],
+      ),
+      actions: <Widget>[
+        FlatButton(onPressed: (){
+          _handleSubmit(_editTextController.text);
+          _editTextController.clear();
+        }, child: Text("Save",style: TextStyle(color: Colors.white),),color: Colors.teal,),
+        FlatButton(onPressed: ()=>Navigator.pop(context), child: Text("Cancel",style: TextStyle(color: Colors.white),),color: Colors.red,),
+      ],
+    );
+    showDialog(context: context,builder: (_){
+      return alert;
+    });
+  }
+
+  void _handleSubmit(String message) async{
+    // Save Into Database
+    var date = DateTime.now();
+    Task addedItem = new Task(message,"${date.day}-${date.month}-${date.year}");
+    int id = await db.addTask(addedItem);
+    Navigator.pop(context);
+
+    setState(() {
+      ShowData();
+    });
+
   }
 
 }
