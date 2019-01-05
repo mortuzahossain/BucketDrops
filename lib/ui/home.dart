@@ -18,10 +18,10 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    ShowData();
+    showData();
   }
 
-  ShowData() async{
+  showData() async{
     items= await db.allTask();
     setState(() {
       items = items.toList();
@@ -103,11 +103,11 @@ class HomeState extends State<Home> {
     // Save Into Database
     var date = DateTime.now();
     Task addedItem = new Task(message,"${date.day}-${date.month}-${date.year}");
-    int id = await db.addTask(addedItem);
+    await db.addTask(addedItem);
     Navigator.pop(context);
 
     setState(() {
-      ShowData();
+      showData();
     });
 
   }

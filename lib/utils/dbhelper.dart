@@ -48,7 +48,7 @@ class DatabaseHelper {
   // Show All Task
   Future<List> allTask() async{
     var dbClient = await db;
-    var result = await dbClient.rawQuery("SELECT * FROM $tableName ORDER BY $columnId ASC");
+    var result = await dbClient.rawQuery("SELECT * FROM $tableName ORDER BY $columnId DESC");
     return result.toList();
   }
 
